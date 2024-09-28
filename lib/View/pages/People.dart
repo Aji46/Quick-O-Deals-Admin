@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:quickdealsadmin/Controller/provider/people_provider.dart';
-import 'package:quickdealsadmin/View/widgets/appbar/appbar.dart';
+import 'package:quickdealsadmin/View/widgets/appbar/People_appbar.dart';
 
 class People extends StatelessWidget {
   const People({super.key});
@@ -11,11 +11,10 @@ class People extends StatelessWidget {
     final PeopleController peopleController = Get.find<PeopleController>();
 
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: PeopleCustomAppBar(),
       body: SafeArea(
         child: Obx(() {
-          // Observing the people list from the controller
-          final peopleData = peopleController.people;
+          final peopleData = peopleController.filteredPeople; // Use filtered list
 
           if (peopleData.isEmpty) {
             return const Center(child: CircularProgressIndicator());

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quickdealsadmin/View/widgets/appbar/appbar.dart';
+import 'package:quickdealsadmin/View/widgets/appbar/dash_searchbar.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
@@ -7,7 +7,7 @@ class Dashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-          appBar: CustomAppBar(),
+          appBar: DashSearchbar(),
       body: SafeArea(child: Text('Dashboard Page'),),
     );
   }

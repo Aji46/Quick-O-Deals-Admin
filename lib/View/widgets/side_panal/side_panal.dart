@@ -33,24 +33,24 @@ class SidePanel extends StatelessWidget {
             ),
           ),
         ),
-        _buildSidePanelItem(
+        Obx(() => _buildSidePanelItem(
           'Dashboard',
           Icons.dashboard,
           sidePanelController.selectedPage.value == 'Dashboard',
           sidePanelController,
-        ),
-        _buildSidePanelItem(
+        )),
+        Obx(() => _buildSidePanelItem(
           'People',
           Icons.people,
           sidePanelController.selectedPage.value == 'People',
           sidePanelController,
-        ),
-        _buildSidePanelItem(
+        )),
+        Obx(() => _buildSidePanelItem(
           'Category',
           Icons.assignment,
           sidePanelController.selectedPage.value == 'Category',
           sidePanelController,
-        ),
+        )),
       ],
     );
   }
@@ -78,11 +78,17 @@ class SidePanel extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, color: const Color.fromARGB(255, 2, 112, 247)),
+            Icon(
+              icon,
+              color: isSelected ? Colors.blue : const Color.fromARGB(255, 2, 112, 247),
+            ),
             const SizedBox(width: 8),
             Text(
               title,
-              style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+              style: TextStyle(
+                color: isSelected ? Colors.blue : const Color.fromARGB(255, 0, 0, 0),
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
             ),
           ],
         ),

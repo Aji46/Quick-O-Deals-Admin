@@ -8,7 +8,7 @@ import 'package:quickdealsadmin/Controller/provider/people_provider.dart';
 import 'package:quickdealsadmin/Controller/provider/side_panal_provider.dart';
 import 'package:quickdealsadmin/Model/auth.dart';
 import 'package:quickdealsadmin/View/pages/dashboard.dart';
-import 'package:quickdealsadmin/View/pages/home.dart'; // Make sure to import AuthRepository
+import 'package:quickdealsadmin/View/pages/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

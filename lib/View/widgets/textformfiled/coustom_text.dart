@@ -3,16 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:quickdealsadmin/Controller/validation/provider.dart';
 import 'package:quickdealsadmin/contants/color.dart';
 
-
-// Import the provider class
-
 class CustomTextFormField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final bool isPassword;
-   final String? prefixText; 
+  final String? prefixText;
 
   const CustomTextFormField({
     Key? key,
@@ -21,8 +18,24 @@ class CustomTextFormField extends StatelessWidget {
     this.keyboardType,
     this.validator,
     this.isPassword = false,
-     this.prefixText, 
+    this.prefixText,
   }) : super(key: key);
+
+  String? _customValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Field cannot be empty';
+    }
+    if (RegExp(r'^\s+$').hasMatch(value)) {
+      return 'Field cannot contain only spaces';
+    }
+    if (RegExp(r'^\d+$').hasMatch(value)) {
+      return 'Field cannot contain only numbers';
+    }
+    if (validator != null) {
+      return validator!(value);
+    }
+    return null; 
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +54,7 @@ class CustomTextFormField extends StatelessWidget {
               keyboardType: keyboardType,
               obscureText: isPassword && provider.obscureText,
               decoration: InputDecoration(
-                 prefixText: prefixText,
+                prefixText: prefixText,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: const BorderSide(
@@ -62,13 +75,12 @@ class CustomTextFormField extends StatelessWidget {
                 labelStyle: const TextStyle(color: MyColors.mycolor7),
                 suffixIcon: isPassword
                     ? IconButton(
-                        icon: Icon(
-                            provider.obscureText ? Icons.visibility : Icons.visibility_off),
+                        icon: Icon(provider.obscureText ? Icons.visibility : Icons.visibility_off),
                         onPressed: provider.toggleObscureText,
                       )
                     : null,
               ),
-              validator: validator,
+              validator: _customValidator, // Use the custom validation function here
             ),
           );
         },

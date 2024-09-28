@@ -5,15 +5,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:quickdealsadmin/Model/category_model.dart';
 
 class CategoryController extends GetxController {
   final categoryController = TextEditingController();
-  final imageFile = Rx<XFile?>(null);  // Use XFile instead of File
+  final imageFile = Rx<XFile?>(null);
   final categories = <CategoryModel>[].obs;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -39,12 +40,10 @@ class CategoryController extends GetxController {
 
         if (kIsWeb) {
           log("Running on the web platform...");
-          // Use readAsBytes for web to get Uint8List
           Uint8List? imageData = await imageFile.value!.readAsBytes();
           uploadTask = firebaseStorageRef.putData(imageData);
         } else {
           log("Running on a mobile platform (Android or iOS)...");
-          // For mobile, putFile can still be used with XFile
           uploadTask = firebaseStorageRef.putFile(File(imageFile.value!.path));
         }
 
@@ -53,27 +52,11 @@ class CategoryController extends GetxController {
         String downloadUrl = await taskSnapshot.ref.getDownloadURL();
         log("File uploaded successfully, download URL: $downloadUrl");
 
-        // Save the category with the image URL in Firestore
-        // CategoryModel newCategory = CategoryModel(
-        //   name: categoryController.text,
-        //   imageUrl: downloadUrl,
-        // );
+        await _firestore.collection("category").doc(categoryController.text).set({
+          "name": categoryController.text,
+          "image": downloadUrl
+        });
 
-
-        
-
-       // await _firestore.collection('category').add(newCategory.toJson());
-    
-       await _firestore.collection("category").doc(categoryController.text).set({
-        "name":categoryController.text,
-        "image":downloadUrl
-
-       });
-
-        // Update the local state
-        //categories.add(newCategory);
-
-        // Clear the input fields
         categoryController.clear();
         imageFile.value = null;
 
@@ -101,21 +84,103 @@ class CategoryController extends GetxController {
 
   Future<void> fetchCategories() async {
     try {
-      final snapshot = await _firestore.collection('category').get();
-      if (snapshot.docs.isNotEmpty) {
-        categories.value = snapshot.docs.map((doc) {
-          print(".........................${categories.value}");
-          return CategoryModel.fromJson(doc.data());
-          
-        }).toList();
+      final querySnapshot = await _firestore.collection('category').get();
+      final categoryList = querySnapshot.docs.map((doc) {
+        final data = doc.data();
+        return CategoryModel(
+          name: data['name'],
+          imageUrl: data['image'],
+        );
+      }).toList();
+      categories.assignAll(categoryList);
+    } catch (e) {
+      log("Error fetching categories: $e");
+    }
+  }
+
+  // Future<void> fetchCategoryDetails(String categoryName) async {
+  //   try {
+  //     final doc = await _firestore.collection('category').doc(categoryName).get();
+  //     if (doc.exists) {
+  //       final data = doc.data()!;
+  //       categoryController.text = data['name'];
+  //       imageFile.value = XFile((await _downloadImage(data['image'])) as String);
+  //     }
+  //   } catch (e) {
+  //     log("Error fetching category details: $e");
+  //   }
+  // }
+
+  Future<void> updateCategory(String oldName) async {
+    if (categoryController.text.isNotEmpty && imageFile.value != null) {
+      try {
+        String fileName = basename(imageFile.value!.name);
+        Reference firebaseStorageRef = _storage.ref().child('category_images/$fileName');
+        UploadTask uploadTask = kIsWeb
+            ? firebaseStorageRef.putData(await imageFile.value!.readAsBytes())
+            : firebaseStorageRef.putFile(File(imageFile.value!.path));
+        
+        TaskSnapshot taskSnapshot = await uploadTask;
+        String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+
+        await _firestore.collection("category").doc(oldName).update({
+          "name": categoryController.text,
+          "image": downloadUrl
+        });
+
+        int index = categories.indexWhere((cat) => cat.name == oldName);
+        if (index != -1) {
+          categories[index] = CategoryModel(name: categoryController.text, imageUrl: downloadUrl);
+        }
+
+        categoryController.clear();
+        imageFile.value = null;
+
+       Fluttertoast.showToast(
+  msg: "Category added successfully!",
+  toastLength: Toast.LENGTH_SHORT,
+  gravity: ToastGravity.BOTTOM,
+  backgroundColor: Colors.green,
+  textColor: Colors.white,
+);
+
+      } catch (error) {
+        log("Error updating category: $error");
+        ScaffoldMessenger.of(Get.context!).showSnackBar(
+          SnackBar(content: Text('Failed to update category: $error')),
+        );
+      }
+    } else {
+        Fluttertoast.showToast(
+  msg: "Please provide a imane and catogory name",
+  toastLength: Toast.LENGTH_SHORT,
+  gravity: ToastGravity.BOTTOM,
+  backgroundColor: Colors.green,
+  textColor: Colors.white,
+);
+    }
+  }
+
+  Future<void> deleteCategory(String categoryName) async {
+    try {
+      await _firestore.collection('category').doc(categoryName).delete();
+      categories.removeWhere((category) => category.name == categoryName);
+    } catch (e) {
+      log("Error deleting category: $e");
+    }
+  }
+
+  Future<List<int>> _downloadImage(String imageUrl) async {
+    try {
+      final response = await http.get(Uri.parse(imageUrl));
+      if (response.statusCode == 200) {
+        return response.bodyBytes;
       } else {
-        categories.clear();
+        throw Exception('Failed to load image');
       }
     } catch (e) {
-      print('Error fetching categories: $e');
-      categories.clear();
+      log("Error downloading image: $e");
+      rethrow;
     }
   }
 }
-
-

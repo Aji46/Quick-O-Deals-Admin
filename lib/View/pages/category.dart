@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:quickdealsadmin/Controller/provider/category_add_getx.dart';
+import 'package:quickdealsadmin/View/widgets/Show%20Dilog/show%20dilog.dart';
 import 'package:quickdealsadmin/View/widgets/circle%20avathar/circle_avathar.dart';
 import 'package:quickdealsadmin/View/widgets/coustom_button.dart';
 import 'package:quickdealsadmin/View/widgets/textformfiled/coustom_text.dart';
@@ -28,7 +27,7 @@ class CategoryView extends StatelessWidget {
                     child: Obx(() {
                       return Stack(
                         children: [
-                          ProfileAvatar(
+                          CategoryAvatar(
                             avatarUrl: _controller.imageFile.value != null
                                 ? _controller.imageFile.value!.path
                                 : '',
@@ -84,7 +83,8 @@ class CategoryView extends StatelessWidget {
                     return const Center(child: Text('No categories available.'));
                   } else {
                     return GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 5,
                         crossAxisSpacing: 8.0,
                         mainAxisSpacing: 8.0,
@@ -93,7 +93,6 @@ class CategoryView extends StatelessWidget {
                       itemCount: _controller.categories.length,
                       itemBuilder: (context, index) {
                         final category = _controller.categories[index];
-                        log(";;;;;;;;;;;;;;;;;;;${category.imageUrl}");
                         return Card(
                           elevation: 2.0,
                           shape: RoundedRectangleBorder(
@@ -103,16 +102,13 @@ class CategoryView extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               CircleAvatar(
-                               
+                                radius: 50,
                                 child: Image.network(
-                                    
                                   category.imageUrl,
                                   errorBuilder: (context, error, stackTrace) {
-                                    print("......$error");
                                     return Text('Failed to load image$error');
                                   },
                                 ),
-                                 radius: 50,
                               ),
                               const SizedBox(height: 8),
                               Text(
@@ -122,6 +118,76 @@ class CategoryView extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                                 textAlign: TextAlign.center,
+                              ),
+                             Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () async {
+                                        await _controller.fetchCategories();
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text('Edit Category'),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: _controller.pickImage,
+                                                    child: Obx(() {
+                                                      return CategoryAvatar(
+                                                        avatarUrl: _controller.imageFile.value != null
+                                                            ? _controller.imageFile.value!.path
+                                                            : '',
+                                                      );
+                                                    }),
+                                                  ),
+                                                  CustomTextFormField(
+                                                    labelText: "Enter the category",
+                                                    controller: _controller.categoryController,
+                                                  ),
+                                                ],
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    _controller.updateCategory(category.name);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Update'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () => Navigator.of(context).pop(),
+                                                  child: Text('Cancel'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () async {
+                                        bool confirm = await showDeleteConfirmationDialog(context);
+                                        if (confirm) {
+                                          _controller.deleteCategory(category.name); 
+                                        }
+                                      },
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),

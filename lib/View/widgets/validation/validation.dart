@@ -40,16 +40,5 @@ static String? validatePhoneNumber(String? value) {
     return null;
   }
 
-  // New OTP validation method
-  static String? validateOtp(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'OTP is required';
-    }
-    if (value.length != 6) {
-      return 'OTP must be 6 digits';
-    }
-    // Additional OTP validation logic (if needed)
-    return null;
-  }
 
 }
