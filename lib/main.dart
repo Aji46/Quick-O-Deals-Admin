@@ -9,6 +9,8 @@ import 'package:quickdealsadmin/Controller/provider/side_panal_provider.dart';
 import 'package:quickdealsadmin/Model/auth.dart';
 import 'package:quickdealsadmin/View/pages/dashboard.dart';
 import 'package:quickdealsadmin/View/pages/home.dart';
+import 'package:quickdealsadmin/View/pages/product_detaile.dart';
+import 'package:quickdealsadmin/View/pages/user_detaile_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,9 +41,12 @@ void main() async {
 
   // Register controllers with GetX
   Get.put(AuthController(authRepository: authRepository));
-  Get.put(PeopleController());
+
   Get.put(SidePanelController());
   Get.put(CategoryController());
+   Get.lazyPut<PeopleController>(() => PeopleController());
+     Get.put(PeopleController());
+
 
   runApp(const MyApp());
 }
@@ -53,6 +58,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Flutter Demo',
+       routes: {
+        '/ProductDetailPage': (context) => const ProductDetailPage(),
+        '/ProfileDetailPage': (context) => ProfileDetailPage(),
+      },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
