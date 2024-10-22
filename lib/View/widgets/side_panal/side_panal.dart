@@ -25,7 +25,7 @@ class SidePanel extends StatelessWidget {
             child: const Row(
               children: [
                 CircleAvatar(
-                  backgroundImage: AssetImage('assets/ava.png'),
+                  backgroundImage: AssetImage('assets/avthar.jpg'),
                 ),
                 SizedBox(width: 8),
                 Text("aji"),

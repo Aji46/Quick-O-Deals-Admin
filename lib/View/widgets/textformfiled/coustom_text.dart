@@ -28,9 +28,6 @@ class CustomTextFormField extends StatelessWidget {
     if (RegExp(r'^\s+$').hasMatch(value)) {
       return 'Field cannot contain only spaces';
     }
-    if (RegExp(r'^\d+$').hasMatch(value)) {
-      return 'Field cannot contain only numbers';
-    }
     if (validator != null) {
       return validator!(value);
     }

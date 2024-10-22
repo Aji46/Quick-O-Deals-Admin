@@ -45,7 +45,7 @@ class People extends StatelessWidget {
                         child: Icon(Icons.person),
                       ),
                 title: Text(name),
-                subtitle: Text('Document ID: $documentId'),
+                // subtitle: Text('Document ID: $documentId'),
               onTap: () {
   Get.to(() => ProfileDetailPage(), arguments: {
     'username': person['username'] ?? 'Unknown',

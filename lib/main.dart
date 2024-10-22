@@ -7,8 +7,7 @@ import 'package:quickdealsadmin/Controller/provider/email_auth.dart';
 import 'package:quickdealsadmin/Controller/provider/people_provider.dart';
 import 'package:quickdealsadmin/Controller/provider/side_panal_provider.dart';
 import 'package:quickdealsadmin/Model/auth.dart';
-import 'package:quickdealsadmin/View/pages/dashboard.dart';
-import 'package:quickdealsadmin/View/pages/home.dart';
+import 'package:quickdealsadmin/View/pages/login.dart';
 import 'package:quickdealsadmin/View/pages/product_detaile.dart';
 import 'package:quickdealsadmin/View/pages/user_detaile_page.dart';
 
@@ -67,8 +66,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const BaseLayout(content: Dashboard())
-      // LoginScreen(),
+      home: 
+      // const BaseLayout(content: Dashboard())
+      LoginScreen(),
     );
   }
 }

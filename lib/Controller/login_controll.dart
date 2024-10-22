@@ -7,7 +7,7 @@ class LoginController {
   LoginController(this.context);
 
   Future<void> login(String email, String password) async {
-    const allowedEmail = 'ajilesh47@gmail.com';
+    const allowedEmail = 'ajthepicturesque@gmail.com';
     const allowedPassword = '8943381295';
 
     if (email == allowedEmail && password == allowedPassword) {

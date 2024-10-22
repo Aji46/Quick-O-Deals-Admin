@@ -23,7 +23,7 @@ class ProfilePage extends StatelessWidget {
           children: [
             const CircleAvatar(
               radius: 50,
-              backgroundImage: AssetImage('assets/ava.png'),
+              backgroundImage: AssetImage('assets/avthar.jpg'),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -35,7 +35,7 @@ class ProfilePage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             const Text(
-              'aji@gmail.com',  
+              'ajthepicturesque@gmail.com',  
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
